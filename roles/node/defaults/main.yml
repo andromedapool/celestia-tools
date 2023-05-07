@@ -1,0 +1,8 @@
+---
+git_celestia_scripts: "https://github.com/andromedapool/celestia-scripts.git"
+celestia_node_type: "bridge"
+celestia_node_version: "v0.9.1"
+celestia_keyring: "test"
+node_public_ip: "https://rpc-blockspacerace.pops.one/"
+recreate_node: false
+show_mnemonic: true

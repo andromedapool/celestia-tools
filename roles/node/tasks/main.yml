@@ -1,0 +1,58 @@
+---
+- name: Machine name & IP address
+  debug: msg="Machine {{ inventory_hostname }} | IP {{ ansible_host }}"
+
+- name: Get user home directory
+  set_fact:
+    home_dir: "{{ ansible_env.HOME }}"
+
+- name: Clone AndromedaPool Celestia scripts git repository
+  ansible.builtin.git:
+    repo: "{{ git_celestia_scripts }}"
+    dest: "{{ home_dir }}/celestia-node"
+    version: main
+
+- name: Set env file
+  template:
+    src: env.j2
+    dest: "{{ home_dir }}/celestia-node/.env"
+
+- name: Change celestia data directory permissions
+  ansible.builtin.file:
+    path: "{{ home_dir }}/celestia-node/.celestia-data"
+    state: directory
+    mode: "0777"
+
+- name: Tear down existing services
+  community.docker.docker_compose:
+    project_src: "{{ home_dir }}/celestia-node"
+    files:
+      - node.yml
+    state: absent
+  when: recreate_node == true
+
+- name: Run node
+  community.docker.docker_compose:
+    project_src: "{{ home_dir }}/celestia-node"
+    files:
+      - node.yml
+    state: present
+
+- name: Sleep for 5 seconds to be sure the node has started
+  ansible.builtin.pause:
+    seconds: 5
+
+- name: Backup KEYS in /bridge-keys
+  ansible.builtin.shell: "{{ home_dir }}/celestia-node/scripts/03-bkp-keys.sh"
+  environment:
+    CELESTIA_NODE_TYPE: "{{ celestia_node_type }}"
+
+- name: Find mnemonic in logs
+  ansible.builtin.shell: "docker logs {{ celestia_node_type }} 2>&1 | grep 'MNEMONIC' -B 3 -A 2"
+  register: mnemonic
+  when: show_mnemonic == true
+
+- name: Show mnemonic [[[IMPORTANT]]] YOUR SEED PHRASE MUST BE BACKED UP AND KEPT SECRET
+  debug:
+    msg: "{{ mnemonic.stdout | replace('\n', ' ') }}"
+  when: show_mnemonic == true
