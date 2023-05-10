@@ -52,7 +52,7 @@ Moreover, the repository also includes a backup feature that helps users preserv
 <p>C) Adjust server configuration - edit `hosts` file</p>
 <ol>
     <li><b>Set your remote server username:</b> ansible_user={your_server_user}</li> 
-    <li><b>Set your remote server password:</b> ansible_ssh_pass={your_server_password} (NOTE: if you use ssh keys, then remote this line)</li> 
+    <li><b>Set your remote server password:</b> ansible_ssh_pass={your_server_password} (NOTE: if you use ssh keys, then remove this line)</li> 
     <li><b>Set your remote server IP address:</b> ansible_host={your_server_ip_address}</li>
 </ol>
 
@@ -78,8 +78,7 @@ Moreover, the repository also includes a backup feature that helps users preserv
 <!-- CONTRIBUTE -->
 <h2 id="contribute"> :books: Contribute</h2>
 
-- We would love if you can contribute. We appreciate your pull request so please open them :)
-- Your contributions can help improve the quality of software that is used by many people, making a positive impact on society.
+- Contributions are welcomed, so feel free to fork/open pull requests.
 
 ![-----------------------------------------------------](assets/line.png)
 
